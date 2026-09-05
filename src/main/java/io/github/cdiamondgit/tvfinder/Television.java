@@ -17,6 +17,14 @@ public class Television {
         this.displayType = displayType;
     }
 
+    public void printTv() {
+        System.out.println(this.getBrand() + "-" + this.getModel());
+        System.out.println("Price: €" + this.getPrice());
+        System.out.println("Size: " + this.getSizeInches() + "\"");
+        System.out.println("Refresh Rate: " + this.getRefreshRateHz() + "Hz");
+        System.out.println("Display Type: " + this.getDisplayType());
+    }
+
     public String getBrand() {
         return brand;
     }   
