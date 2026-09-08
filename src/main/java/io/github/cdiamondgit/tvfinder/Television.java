@@ -18,11 +18,11 @@ public class Television {
     }
 
     public void printTv() {
-        System.out.println(this.getBrand() + "-" + this.getModel());
-        System.out.println("Price: €" + this.getPrice());
-        System.out.println("Size: " + this.getSizeInches() + "\"");
-        System.out.println("Refresh Rate: " + this.getRefreshRateHz() + "Hz");
-        System.out.println("Display Type: " + this.getDisplayType());
+        System.out.println(this.brand + "-" + this.model);
+        System.out.println("Price: €" + this.price);
+        System.out.println("Size: " + this.sizeInches + "\"");
+        System.out.println("Refresh Rate: " + this.refreshRateHz + "Hz");
+        System.out.println("Display Type: " + this.displayType);
     }
 
     public String getBrand() {
