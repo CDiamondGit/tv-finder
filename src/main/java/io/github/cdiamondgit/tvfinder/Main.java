@@ -3,19 +3,26 @@ package io.github.cdiamondgit.tvfinder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        String userPrefBrand;
+        Set<String> userPrefBrands = new HashSet<>(); // stores unique strings and provides fast membership checks during recommendation scoring
+        boolean considerBrand = true;
+
         double userPrefBudget;
-        int userRefreshRateHz;
-        String userDisplayType;
         double userMaxBudget;
-        int userMaxSizeInches;
+
         int userMinSizeInches;
+        int userMaxSizeInches;
+
+        Set<Integer> userRefreshRates = new HashSet<>();
         boolean considerRefreshRate = true;
+
+        Set<String> userDisplayTypes = new HashSet<>();
         boolean considerDisplayType = true;
 
         List<Television> televisions = new ArrayList<>();
@@ -44,34 +51,51 @@ public class Main {
         televisions.add(tv9);
         televisions.add(tv10);
 
-        System.out.print("Do you have a preferred TV brand?\n"
+        // BRAND 
+
+        System.out.print("Brand preference:\n"
         + "1. No preference\n"
-        + "2. LG\n"
-        + "3. Samsung\n"
-        + "4. Sony\n"
-        + "5. TCL\n"
-        + "6. Hisense\n"
-        + "7. Other\n"
-        + "Enter choice: ");
+        + "2. Choose brands\n");
 
-        int brandChoice = scanner.nextInt();
-
-        if (brandChoice == 1) {
-            userPrefBrand = "";
-        } else if (brandChoice == 2) {
-            userPrefBrand = "LG";
-        } else if (brandChoice == 3) {
-            userPrefBrand = "Samsung";
-        } else if (brandChoice == 4) {
-            userPrefBrand = "Sony";
-        } else if (brandChoice == 5) {
-            userPrefBrand = "TCL";
-        } else if (brandChoice == 6) {
-            userPrefBrand = "Hisense";
+        if (scanner.nextInt() == 1) {
+            considerBrand = false;
         } else {
-            System.out.print("Enter brand: ");
-            userPrefBrand = scanner.next();
+            considerBrand = true;
+
+            scanner.nextLine();
+
+            System.out.print("Choose preferred brands:\n"
+                    + "1. LG\n"
+                    + "2. Samsung\n"
+                    + "3. Sony\n"
+                    + "4. TCL\n"
+                    + "5. Hisense\n"
+                    + "Enter choices (e.g. 1 2): ");
+
+            String brandChoices = scanner.nextLine();
+
+            if (brandChoices.contains("1")) {
+                userPrefBrands.add("LG");
+            }
+
+            if (brandChoices.contains("2")) {
+                userPrefBrands.add("Samsung");
+            }
+
+            if (brandChoices.contains("3")) {
+                userPrefBrands.add("Sony");
+            }
+
+            if (brandChoices.contains("4")) {
+                userPrefBrands.add("TCL");
+            }
+
+            if (brandChoices.contains("5")) {
+                userPrefBrands.add("Hisense");
+            }
         }
+
+        // BUDGET 
 
         System.out.print("What is your preferred budget? (€): ");
         userPrefBudget = scanner.nextDouble();
@@ -94,23 +118,30 @@ public class Main {
             userMaxBudget = userPrefBudget;
         }
 
-        System.out.print("How would you like to choose TV size?\n"
-                + "1. Small (32\"-43\")\n"
-                + "2. Medium (44\"-55\")\n"
-                + "3. Large (56\"-75\")\n"
-                + "4. Choose a size range\n");
+        // SIZE 
 
-        int sizeChoice = scanner.nextInt();
+        System.out.print("Size preference:\n"
+                + "1. Choose general size\n"
+                + "2. Choose custom range\n");
 
-        if (sizeChoice == 1) {
-            userMinSizeInches = 32;
-            userMaxSizeInches = 43;
-        } else if (sizeChoice == 2) {
-            userMinSizeInches = 44;
-            userMaxSizeInches = 55;
-        } else if (sizeChoice == 3) {
-            userMinSizeInches = 56;
-            userMaxSizeInches = 75;
+        if (scanner.nextInt() == 1) {
+            System.out.print("Choose general size:\n"
+                    + "1. Small (32\"-43\")\n"
+                    + "2. Medium (44\"-55\")\n"
+                    + "3. Large (56\"-75\")\n");
+
+            int sizeChoice = scanner.nextInt();
+
+            if (sizeChoice == 1) {
+                userMinSizeInches = 32;
+                userMaxSizeInches = 43;
+            } else if (sizeChoice == 2) {
+                userMinSizeInches = 44;
+                userMaxSizeInches = 55;
+            } else {
+                userMinSizeInches = 56;
+                userMaxSizeInches = 75;
+            }
         } else {
             System.out.print("Enter minimum size (inches): ");
             userMinSizeInches = scanner.nextInt();
@@ -119,62 +150,80 @@ public class Main {
             userMaxSizeInches = scanner.nextInt();
         }
 
-        System.out.print("Refresh rate:\n"
-                + "1. No preference\n"
-                + "2. Include\n");
+        // REFRESH RATE 
 
-        if (scanner.nextInt() == 2) {
+        System.out.print("Refresh rate preference:\n"
+                + "1. No preference\n"
+                + "2. Choose refresh rates\n");
+
+        if (scanner.nextInt() == 1) {
+            considerRefreshRate = false;
+        } else {
             considerRefreshRate = true;
 
-            System.out.print("Choose refresh rate:\n"
+            scanner.nextLine();
+
+            System.out.print("Choose preferred refresh rates:\n"
                     + "1. 60Hz\n"
                     + "2. 120Hz\n"
-                    + "3. 144Hz\n");
+                    + "3. 144Hz\n"
+                    + "Enter choices (e.g. 1 2): ");
 
-            int refreshRateChoice = scanner.nextInt();
+            String refreshRateChoices = scanner.nextLine();
 
-            if (refreshRateChoice == 1) {
-                userRefreshRateHz = 60;
-            } else if (refreshRateChoice == 2) {
-                userRefreshRateHz = 120;
-            } else {
-                userRefreshRateHz = 144;
+            if (refreshRateChoices.contains("1")) {
+                userRefreshRates.add(60);
             }
-        } else {
-            considerRefreshRate = false;
-            userRefreshRateHz = 0;
+
+            if (refreshRateChoices.contains("2")) {
+                userRefreshRates.add(120);
+            }
+
+            if (refreshRateChoices.contains("3")) {
+                userRefreshRates.add(144);
+            }
         }
 
-        System.out.print("Display type:\n"
-                + "1. No preference\n"
-                + "2. Include\n");
+        // DISPLAY TYPE 
 
-        if (scanner.nextInt() == 2) {
+        System.out.print("Display type preference:\n"
+                + "1. No preference\n"
+                + "2. Choose display types\n");
+
+        if (scanner.nextInt() == 1) {
+            considerDisplayType = false;
+        } else {
             considerDisplayType = true;
 
-            System.out.print("Choose display type:\n"
+            scanner.nextLine();
+
+            System.out.print("Choose preferred display types:\n"
                     + "1. OLED\n"
                     + "2. QD-OLED\n"
                     + "3. Mini-LED\n"
-                    + "4. QLED\n");
+                    + "4. QLED\n"
+                    + "Enter choices (e.g. 1 3): ");
 
-            int displayTypeChoice = scanner.nextInt();
+            String displayTypeChoices = scanner.nextLine();
 
-            if (displayTypeChoice == 1) {
-                userDisplayType = "OLED";
-            } else if (displayTypeChoice == 2) {
-                userDisplayType = "QD-OLED";
-            } else if (displayTypeChoice == 3) {
-                userDisplayType = "Mini-LED";
-            } else {
-                userDisplayType = "QLED";
+            if (displayTypeChoices.contains("1")) {
+                userDisplayTypes.add("OLED");
             }
-        } else {
-            considerDisplayType = false;
-            userDisplayType = "";
+
+            if (displayTypeChoices.contains("2")) {
+                userDisplayTypes.add("QD-OLED");
+            }
+
+            if (displayTypeChoices.contains("3")) {
+                userDisplayTypes.add("Mini-LED");
+            }
+
+            if (displayTypeChoices.contains("4")) {
+                userDisplayTypes.add("QLED");
+            }
         }
 
-        UserPreferredTelevision userTv = new UserPreferredTelevision(userPrefBrand, userPrefBudget, userMaxBudget, userMaxSizeInches, userMinSizeInches, userRefreshRateHz, userDisplayType, considerRefreshRate, considerDisplayType);
+        UserPreferredTelevision userTv = new UserPreferredTelevision(userPrefBrands, considerBrand, userPrefBudget, userMaxBudget, userMinSizeInches, userMaxSizeInches, userRefreshRates, considerRefreshRate, userDisplayTypes, considerDisplayType);
 
         RecommendationEngine recommendationEngine = new RecommendationEngine();
         List<Recommendation> recommendations = new ArrayList<>();

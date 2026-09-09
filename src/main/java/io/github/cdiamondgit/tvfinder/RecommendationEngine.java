@@ -4,12 +4,14 @@ import java.util.List;
 
 public class RecommendationEngine {
 
-    public Recommendation calculateRecommendation(List <Recommendation> recommendations, UserPreferredTelevision userTv) {
+    public Recommendation calculateRecommendation(List<Recommendation> recommendations, UserPreferredTelevision userTv) {
         for (Recommendation recommendation : recommendations) {
-            int score = 0; 
+            int score = 0;
 
-            if (userTv.getUserPrefBrand().equals(recommendation.getTelevision().getBrand())) {
-                score += 15;
+            if (userTv.getConsiderBrand()) {
+                if (userTv.getUserPrefBrands().contains(recommendation.getTelevision().getBrand())) {
+                    score += 15;
+                }
             }
 
             if (recommendation.getTelevision().getPrice() <= userTv.getUserMaxBudget()) {
@@ -19,7 +21,8 @@ public class RecommendationEngine {
                 continue;
             }
 
-            if (recommendation.getTelevision().getSizeInches() >= userTv.getUserMinSizeInches() && recommendation.getTelevision().getSizeInches() <= userTv.getUserMaxSizeInches()) {
+            if (recommendation.getTelevision().getSizeInches() >= userTv.getUserMinSizeInches()
+                    && recommendation.getTelevision().getSizeInches() <= userTv.getUserMaxSizeInches()) {
                 score += 20;
             } else {
                 recommendation.setScore(score);
@@ -27,15 +30,15 @@ public class RecommendationEngine {
             }
 
             if (userTv.getConsiderRefreshRate()) {
-                if (recommendation.getTelevision().getRefreshRateHz() >= userTv.getUserRefreshRateHz()) {
+                if (userTv.getUserRefreshRates().contains(recommendation.getTelevision().getRefreshRateHz())) {
                     score += 20;
                 } else {
                     score += 10;
-                } 
+                }
             }
 
             if (userTv.getConsiderDisplayType()) {
-                if (userTv.getUserDisplayType().equals(recommendation.getTelevision().getDisplayType())) {
+                if (userTv.getUserDisplayTypes().contains(recommendation.getTelevision().getDisplayType())) {
                     score += 15;
                 }
             }
@@ -44,6 +47,7 @@ public class RecommendationEngine {
         }
 
         Recommendation bestRecommendation = recommendations.get(0);
+
         for (Recommendation recommendation : recommendations) {
             if (recommendation.getScore() > bestRecommendation.getScore()) {
                 bestRecommendation = recommendation;
