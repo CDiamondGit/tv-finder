@@ -5,8 +5,8 @@ import java.util.Set;
 public class UserPreferredTelevision {
 
     // user can enter preffered brands/ecosystems, or no preference
-    private Set<String> userPrefBrands;
-    private boolean considerBrand;
+    private Set<String> userBrands;
+    private PreferenceLevel brandPreferenceLevel;
 
     // calculate feature points separately from price, then use price at end to whittle down results
     // two categories - strict budget and max budget, each with two categories - best value for money and best raw score
@@ -21,28 +21,28 @@ public class UserPreferredTelevision {
     // user can choose to have or not have this as a weighted field for the score
     // if they choose to include it, they can choose from three options - "Guide me", "I know what I want", "Show me the tech"
     private Set<Integer> userRefreshRates;
-    private boolean considerRefreshRate;
+    private PreferenceLevel refreshRatePreferenceLevel;
 
     // user can choose to have or not have this as a weighted field for the score
     // if they choose to include it, they can choose from three options - "Guide me", "I know what I want", "Show me the tech"
     private Set<String> userDisplayTypes;
-    private boolean considerDisplayType;
+    private PreferenceLevel displayTypePreferenceLevel;
 
-    public UserPreferredTelevision(Set<String> userPrefBrands, boolean considerBrand, double userPrefBudget, double userMaxBudget, int userMinSizeInches, int userMaxSizeInches, Set<Integer> userRefreshRates, boolean considerRefreshRate, Set<String> userDisplayTypes, boolean considerDisplayType) {
-        this.userPrefBrands = userPrefBrands;
-        this.considerBrand = considerBrand;
+    public UserPreferredTelevision(Set<String> userBrands, PreferenceLevel brandPreferenceLevel, double userPrefBudget, double userMaxBudget, int userMinSizeInches, int userMaxSizeInches, Set<Integer> userRefreshRates, PreferenceLevel refreshRatePreferenceLevel, Set<String> userDisplayTypes, PreferenceLevel displayTypePreferenceLevel) {
+        this.userBrands = userBrands;
+        this.brandPreferenceLevel = brandPreferenceLevel;
         this.userPrefBudget = userPrefBudget;
         this.userMaxBudget = userMaxBudget;
         this.userMinSizeInches = userMinSizeInches;
         this.userMaxSizeInches = userMaxSizeInches;
         this.userRefreshRates = userRefreshRates;
-        this.considerRefreshRate = considerRefreshRate;
+        this.refreshRatePreferenceLevel = refreshRatePreferenceLevel;
         this.userDisplayTypes = userDisplayTypes;
-        this.considerDisplayType = considerDisplayType;
+        this.displayTypePreferenceLevel = displayTypePreferenceLevel;
     }
 
-    public Set<String> getUserPrefBrands() {
-        return userPrefBrands;
+    public Set<String> getUserBrands() {
+        return userBrands;
     }
 
     public double getUserPrefBudget() {
@@ -69,15 +69,15 @@ public class UserPreferredTelevision {
         return userMaxBudget;
     }
 
-    public boolean getConsiderBrand() {
-        return considerBrand;
+    public PreferenceLevel getBrandPreferenceLevel() {
+        return brandPreferenceLevel;
     }
 
-    public boolean getConsiderRefreshRate() {
-        return considerRefreshRate;
+    public PreferenceLevel getRefreshRatePreferenceLevel() {
+        return refreshRatePreferenceLevel;
     }
 
-    public boolean getConsiderDisplayType() {
-        return considerDisplayType;
+    public PreferenceLevel getDisplayTypePreferenceLevel() {
+        return displayTypePreferenceLevel;
     }
 }

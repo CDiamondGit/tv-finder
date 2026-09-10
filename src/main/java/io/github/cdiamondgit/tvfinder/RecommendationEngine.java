@@ -1,53 +1,56 @@
 package io.github.cdiamondgit.tvfinder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecommendationEngine {
 
-    public Recommendation calculateRecommendation(List<Recommendation> recommendations, UserPreferredTelevision userTv) {
-        for (Recommendation recommendation : recommendations) {
-            int score = 0;
+    public Recommendation calculateRecommendation(List <Television> televisions, UserPreferredTelevision userTv) {
+        List <Recommendation> recommendations = new ArrayList<>();
+        int totalImportanceWeight = userTv.getDisplayTypePreferenceLevel().getImportanceWeight() + userTv.getRefreshRatePreferenceLevel().getImportanceWeight() + userTv.getBrandPreferenceLevel().getImportanceWeight();
 
-            if (userTv.getConsiderBrand()) {
-                if (userTv.getUserPrefBrands().contains(recommendation.getTelevision().getBrand())) {
-                    score += 15;
-                }
-            }
+    for (Television television : televisions) {
+        double score = 0;
 
-            if (recommendation.getTelevision().getPrice() <= userTv.getUserMaxBudget()) {
-                score += 20;
-            } else {
-                recommendation.setScore(score);
+        if (userTv.getBrandPreferenceLevel() == PreferenceLevel.ESSENTIAL) {
+            if (!userTv.getUserBrands().contains(television.getBrand())) {
                 continue;
             }
-
-            if (recommendation.getTelevision().getSizeInches() >= userTv.getUserMinSizeInches()
-                    && recommendation.getTelevision().getSizeInches() <= userTv.getUserMaxSizeInches()) {
-                score += 20;
-            } else {
-                recommendation.setScore(score);
-                continue;
-            }
-
-            if (userTv.getConsiderRefreshRate()) {
-                if (userTv.getUserRefreshRates().contains(recommendation.getTelevision().getRefreshRateHz())) {
-                    score += 20;
-                } else {
-                    score += 10;
-                }
-            }
-
-            if (userTv.getConsiderDisplayType()) {
-                if (userTv.getUserDisplayTypes().contains(recommendation.getTelevision().getDisplayType())) {
-                    score += 15;
-                }
-            }
-
-            recommendation.setScore(score);
+        } else if (userTv.getBrandPreferenceLevel() != PreferenceLevel.NO_PREFERENCE) {
+            score += calculateBrand(television, userTv, totalImportanceWeight);
         }
 
-        Recommendation bestRecommendation = recommendations.get(0);
+        if (television.getPrice() <= userTv.getUserMaxBudget()) {
+            score += 20;
+        } else {
+            continue;
+        }
 
+        if (television.getSizeInches() >= userTv.getUserMinSizeInches()
+                && television.getSizeInches() <= userTv.getUserMaxSizeInches()) {
+            score += 20;
+        } else {
+            continue;
+        }
+
+        if (userTv.getRefreshRatePreferenceLevel() != PreferenceLevel.NO_PREFERENCE) {
+            if (userTv.getUserRefreshRates().contains(television.getRefreshRate())) {
+                score += 20;
+            } else {
+                score += 10;
+            }
+        }
+
+        if (userTv.getDisplayTypePreferenceLevel() != PreferenceLevel.NO_PREFERENCE) {
+            if (userTv.getUserDisplayTypes().contains(television.getDisplayType())) {
+                score += 15;
+            }
+        }
+
+        recommendations.add(new Recommendation(television, score));
+    }
+
+    Recommendation bestRecommendation = recommendations.get(0);
         for (Recommendation recommendation : recommendations) {
             if (recommendation.getScore() > bestRecommendation.getScore()) {
                 bestRecommendation = recommendation;
@@ -55,5 +58,15 @@ public class RecommendationEngine {
         }
 
         return bestRecommendation;
+    }
+
+    private double calculateBrand(Television television, UserPreferredTelevision userTv, int totalImportanceWeight) {
+        double brandScore = 0;
+
+        if (userTv.getUserBrands().contains(television.getBrand())) {
+            brandScore = userTv.getBrandPreferenceLevel().getImportanceWeight() * 100.0 / totalImportanceWeight;
+        }
+
+        return brandScore;
     }
 }

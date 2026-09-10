@@ -10,8 +10,8 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        Set<String> userPrefBrands = new HashSet<>(); // stores unique strings and provides fast membership checks during recommendation scoring
-        boolean considerBrand = true;
+        Set<String> userBrands = new HashSet<>(); // stores unique strings and provides fast membership checks during recommendation scoring
+        PreferenceLevel considerBrand = PreferenceLevel.NO_PREFERENCE;
 
         double userPrefBudget;
         double userMaxBudget;
@@ -20,10 +20,10 @@ public class Main {
         int userMaxSizeInches;
 
         Set<Integer> userRefreshRates = new HashSet<>();
-        boolean considerRefreshRate = true;
+        PreferenceLevel considerRefreshRate = PreferenceLevel.NO_PREFERENCE;
 
         Set<String> userDisplayTypes = new HashSet<>();
-        boolean considerDisplayType = true;
+        PreferenceLevel considerDisplayType = PreferenceLevel.NO_PREFERENCE;
 
         List<Television> televisions = new ArrayList<>();
 
@@ -58,10 +58,8 @@ public class Main {
         + "2. Choose brands\n");
 
         if (scanner.nextInt() == 1) {
-            considerBrand = false;
+            considerBrand = PreferenceLevel.NO_PREFERENCE;
         } else {
-            considerBrand = true;
-
             scanner.nextLine();
 
             System.out.print("Choose preferred brands:\n"
@@ -75,23 +73,41 @@ public class Main {
             String brandChoices = scanner.nextLine();
 
             if (brandChoices.contains("1")) {
-                userPrefBrands.add("LG");
+                userBrands.add("LG");
             }
 
             if (brandChoices.contains("2")) {
-                userPrefBrands.add("Samsung");
+                userBrands.add("Samsung");
             }
 
             if (brandChoices.contains("3")) {
-                userPrefBrands.add("Sony");
+                userBrands.add("Sony");
             }
 
             if (brandChoices.contains("4")) {
-                userPrefBrands.add("TCL");
+                userBrands.add("TCL");
             }
 
             if (brandChoices.contains("5")) {
-                userPrefBrands.add("Hisense");
+                userBrands.add("Hisense");
+            }
+
+            System.out.print("How important is your brand preference?\n"
+                    + "1. Slight preference\n"
+                    + "2. Medium preference\n"
+                    + "3. Strong preference\n"
+                    + "4. Essential\n");
+
+            int brandPreferenceChoice = scanner.nextInt();
+
+            if (brandPreferenceChoice == 1) {
+                considerBrand = PreferenceLevel.SLIGHT_PREFERENCE;
+            } else if (brandPreferenceChoice == 2) {
+                considerBrand = PreferenceLevel.MEDIUM_PREFERENCE;
+            } else if (brandPreferenceChoice == 3) {
+                considerBrand = PreferenceLevel.STRONG_PREFERENCE;
+            } else {
+                considerBrand = PreferenceLevel.ESSENTIAL;
             }
         }
 
@@ -157,10 +173,8 @@ public class Main {
                 + "2. Choose refresh rates\n");
 
         if (scanner.nextInt() == 1) {
-            considerRefreshRate = false;
+            considerRefreshRate = PreferenceLevel.NO_PREFERENCE;
         } else {
-            considerRefreshRate = true;
-
             scanner.nextLine();
 
             System.out.print("Choose preferred refresh rates:\n"
@@ -182,6 +196,24 @@ public class Main {
             if (refreshRateChoices.contains("3")) {
                 userRefreshRates.add(144);
             }
+
+            System.out.print("How important is your refresh rate preference?\n"
+                    + "1. Slight preference\n"
+                    + "2. Medium preference\n"
+                    + "3. Strong preference\n"
+                    + "4. Essential\n");
+
+            int refreshRatePreferenceChoice = scanner.nextInt();
+
+            if (refreshRatePreferenceChoice == 1) {
+                considerRefreshRate = PreferenceLevel.SLIGHT_PREFERENCE;
+            } else if (refreshRatePreferenceChoice == 2) {
+                considerRefreshRate = PreferenceLevel.MEDIUM_PREFERENCE;
+            } else if (refreshRatePreferenceChoice == 3) {
+                considerRefreshRate = PreferenceLevel.STRONG_PREFERENCE;
+            } else {
+                considerRefreshRate = PreferenceLevel.ESSENTIAL;
+            }
         }
 
         // DISPLAY TYPE 
@@ -191,10 +223,8 @@ public class Main {
                 + "2. Choose display types\n");
 
         if (scanner.nextInt() == 1) {
-            considerDisplayType = false;
+            considerDisplayType = PreferenceLevel.NO_PREFERENCE;
         } else {
-            considerDisplayType = true;
-
             scanner.nextLine();
 
             System.out.print("Choose preferred display types:\n"
@@ -221,18 +251,30 @@ public class Main {
             if (displayTypeChoices.contains("4")) {
                 userDisplayTypes.add("QLED");
             }
+
+            System.out.print("How important is your display type preference?\n"
+                    + "1. Slight preference\n"
+                    + "2. Medium preference\n"
+                    + "3. Strong preference\n"
+                    + "4. Essential\n");
+
+            int displayTypePreferenceChoice = scanner.nextInt();
+
+            if (displayTypePreferenceChoice == 1) {
+                considerDisplayType = PreferenceLevel.SLIGHT_PREFERENCE;
+            } else if (displayTypePreferenceChoice == 2) {
+                considerDisplayType = PreferenceLevel.MEDIUM_PREFERENCE;
+            } else if (displayTypePreferenceChoice == 3) {
+                considerDisplayType = PreferenceLevel.STRONG_PREFERENCE;
+            } else {
+                considerDisplayType = PreferenceLevel.ESSENTIAL;
+            }
         }
 
-        UserPreferredTelevision userTv = new UserPreferredTelevision(userPrefBrands, considerBrand, userPrefBudget, userMaxBudget, userMinSizeInches, userMaxSizeInches, userRefreshRates, considerRefreshRate, userDisplayTypes, considerDisplayType);
+        UserPreferredTelevision userTv = new UserPreferredTelevision(userBrands, considerBrand, userPrefBudget, userMaxBudget, userMinSizeInches, userMaxSizeInches, userRefreshRates, considerRefreshRate, userDisplayTypes, considerDisplayType);
 
         RecommendationEngine recommendationEngine = new RecommendationEngine();
-        List<Recommendation> recommendations = new ArrayList<>();
-
-        for (Television television : televisions) {
-            recommendations.add(new Recommendation(television, 0));
-        }
-        
-        Recommendation bestRecommendation = recommendationEngine.calculateRecommendation(recommendations, userTv);
+        Recommendation bestRecommendation = recommendationEngine.calculateRecommendation(televisions, userTv);
 
         bestRecommendation.getTelevision().printTv();
 

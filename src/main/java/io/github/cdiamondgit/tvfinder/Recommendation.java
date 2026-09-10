@@ -2,14 +2,14 @@ package io.github.cdiamondgit.tvfinder;
 
 public class Recommendation {
     private Television television;
-    private int score;
+    private double score;
 
-    public Recommendation(Television television, int score) {
+    public Recommendation(Television television, double score) {
         this.television = television;
         this.score = score;
     }
 
-    public int getScore() {
+    public double getScore() {
         return score;
     }
 
@@ -17,7 +17,7 @@ public class Recommendation {
         return television;
     }
 
-    public void setScore(int score) {
+    public void setScore(double score) {
         this.score = score;
     }
 }
